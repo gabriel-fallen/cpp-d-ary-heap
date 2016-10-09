@@ -5,7 +5,7 @@
 
 
 template<int d>
-void basic_test(heap<int, d> heap) {
+void basic_test(heap<int, d>& heap) {
   heap.insert(10);
   assert(!heap.empty());
   assert(heap.minimal() == 10);

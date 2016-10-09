@@ -35,10 +35,21 @@ class heap {
 
     node(const T& value, int cost) : value(value), cost(cost), parent(nullptr), nfilled(0) {};
     node(const T& value, int cost, node *parent) : value(value), cost(cost), parent(parent), nfilled(0) {};
+    node(node& other) = delete; // no copying
+    node(node&& other) = default; // but moving might be useful
     ~node() {
       for(int i = 0; i < nfilled; ++i) {
         delete children[i];
       }
+    };
+
+    node& operator=(const node&) = delete; // no copying, no assignment
+    node& operator=(const node&& other) {
+      delete this; // free all children
+      value = std::move(other.value);
+      cost  = other.cost;
+      nfilled = other.nfilled;
+      std::copy(other.children, other.children+nfilled, children);
     };
 
     T get_value() const { return value; };
@@ -111,12 +122,22 @@ class heap {
 
 public:
   heap(std::function<int(T)> cost_fn) : cost_fn(cost_fn), root(nullptr) {};
+  heap(heap& copy) = delete; //no copying
+  heap(heap&& other) = default; //should work fine
   virtual ~heap() {
     if (root) {
       delete root;
       root = nullptr;
     }
   };
+
+  heap& operator=(const heap&) = delete; //no copying, no assignment
+  heap& operator=(const heap&& other) {
+    delete this; // free actual heap
+    cost_fn = std::move(other.cost_fn);
+    root = other.root;
+    with_free = other.with_free;
+  }
 
   void insert(const T& value) {
     if (root == nullptr) {
