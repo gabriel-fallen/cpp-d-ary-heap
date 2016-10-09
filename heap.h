@@ -45,7 +45,7 @@ class heap {
 
     node& operator=(const node&) = delete; // no copying, no assignment
     node& operator=(const node&& other) {
-      delete this; // free all children
+      ~node(); // free all children
       value = std::move(other.value);
       cost  = other.cost;
       nfilled = other.nfilled;
@@ -133,7 +133,7 @@ public:
 
   heap& operator=(const heap&) = delete; //no copying, no assignment
   heap& operator=(const heap&& other) {
-    delete this; // free actual heap
+    ~heap(); // free actual heap
     cost_fn = std::move(other.cost_fn);
     root = other.root;
     with_free = other.with_free;
